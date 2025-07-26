@@ -16,7 +16,7 @@ const HistoryList = () => {
             height={150}
           />
           <h2 className="font-bold text-lg mt-2">No Recent Consultations</h2>
-          <p>It looks like you haven&apos;t consulted with any doctor yet</p>
+          <p className="text-center text-gray-500 mb-4">It looks like you haven&apos;t consulted with any doctor yet</p>
           <AddNewSessionDialog />
         </div>
       ) : (

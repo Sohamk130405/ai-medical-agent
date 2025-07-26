@@ -63,7 +63,7 @@ const AddNewSessionDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="mt-3">+ Start a Consultation</Button>
+        <Button>+ Start a Consultation</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
