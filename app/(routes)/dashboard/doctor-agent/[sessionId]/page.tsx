@@ -1,15 +1,16 @@
 "use client";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DoctorAgent } from "../../_components/doctor-agent-card";
-import { Circle, PhoneCall, PhoneOff } from "lucide-react";
+import { Circle, Loader2, PhoneCall, PhoneOff } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Vapi from "@vapi-ai/web";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
-type SessionDetails = {
+export type SessionDetails = {
   id: number;
   notes: string;
   sessionId: string;
@@ -24,6 +25,8 @@ type message = {
 };
 
 const DoctorVoiceAgent = () => {
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
   const [vapiInstance, setVapiInstance] = useState<Vapi | null>(null);
   const { sessionId } = useParams<{ sessionId: string }>();
   const [sessionDetails, setSessionDetails] = useState<SessionDetails | null>(
@@ -31,7 +34,6 @@ const DoctorVoiceAgent = () => {
   );
 
   const [callStarted, setCallStarted] = useState<boolean>(false);
-  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [currentRole, setCurrentRole] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<string>("");
   const [messages, setMessages] = useState<message[]>([]);
@@ -47,6 +49,7 @@ const DoctorVoiceAgent = () => {
   };
 
   const startCall = () => {
+    setLoading(true);
     const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY!);
     setVapiInstance(vapi);
 
@@ -75,6 +78,7 @@ const DoctorVoiceAgent = () => {
     };
     // @ts-ignore
     vapi.start(vapiAgentConfig);
+    setLoading(false);
     // Listen for events
     vapi.on("call-start", () => {
       console.log("Call started");
@@ -108,6 +112,8 @@ const DoctorVoiceAgent = () => {
 
   const stopCall = async () => {
     if (!vapiInstance) return;
+    setLoading(true);
+    const result = await generateReport();
     vapiInstance.stop();
     vapiInstance.off("call-start", () => {});
     vapiInstance.off("call-end", () => {});
@@ -115,7 +121,23 @@ const DoctorVoiceAgent = () => {
     setCallStarted(false);
     setVapiInstance(null);
     console.log("Call stopped");
+    setLoading(false);
+    setMessages([]);
+    setTranscript("");
+    toast.success("Call ended and report generated successfully!");
+    router.replace("/dashboard");
   };
+
+  const generateReport = async () => {
+    const result = await axios.post("/api/medical-report", {
+      messages,
+      sessionDetails,
+    });
+
+    console.log(result.data);
+    return result.data;
+  };
+
   return (
     <div className="p-5 rounded-3xl  border-dashed border-3 bg-secondary">
       <div className="flex items-center justify-between">
@@ -156,16 +178,19 @@ const DoctorVoiceAgent = () => {
           </div>
 
           {!callStarted ? (
-            <Button className="mt-20" onClick={startCall}>
-              <PhoneCall /> Start Call
+            <Button className="mt-20" onClick={startCall} disabled={loading}>
+              {loading ? <Loader2 className="animate-spin" /> : <PhoneCall />}{" "}
+              Start Call
             </Button>
           ) : (
             <Button
               className="mt-20"
               variant={"destructive"}
               onClick={stopCall}
+              disabled={loading}
             >
-              <PhoneOff /> Disconnect
+              {loading ? <Loader2 className="animate-spin" /> : <PhoneOff />}{" "}
+              Disconnect
             </Button>
           )}
         </div>
