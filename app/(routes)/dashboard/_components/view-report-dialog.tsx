@@ -58,7 +58,7 @@ const ViewReportDialog = ({ record }: Props) => {
                   </h2>
                   <div className="border-t-2 border-blue-500 pt-2">
                     <h2>
-                      {report.chiefComplaint || "No chief complaint provided."}
+                      {report?.chiefComplaint || "No chief complaint provided."}
                     </h2>
                   </div>
                 </div>
@@ -66,15 +66,15 @@ const ViewReportDialog = ({ record }: Props) => {
                 <div className="mt-2">
                   <h2 className="font-bold text-blue-500 text-lg">Summary</h2>
                   <div className="border-t-2 border-blue-500 pt-2">
-                    <h2>{report.summary}</h2>
+                    <h2>{report?.summary}</h2>
                   </div>
                 </div>
 
                 <div className="mt-2">
                   <h2 className="font-bold text-blue-500 text-lg">Symptoms</h2>
                   <ul className="border-t-2 border-blue-500 pt-2">
-                    {report.symptoms.length > 0 ? (
-                      report.symptoms.map((symptom, index) => (
+                    {report?.symptoms.length > 0 ? (
+                      report?.symptoms.map((symptom, index) => (
                         <li key={index} className="text-gray-500 flex">
                           <Dot />
                           {symptom}
@@ -93,12 +93,12 @@ const ViewReportDialog = ({ record }: Props) => {
                   <div className="grid grid-cols-2 border-t-2 border-blue-500 pt-2">
                     <h2>
                       <span className="font-bold">Duration:</span>{" "}
-                      {report.duration || "Not specified"}
+                      {report?.duration || "Not specified"}
                     </h2>
 
                     <h2>
                       <span className="font-bold">Severity:</span>{" "}
-                      {report.severity || "Not specified"}
+                      {report?.severity || "Not specified"}
                     </h2>
                   </div>
                 </div>
@@ -108,8 +108,8 @@ const ViewReportDialog = ({ record }: Props) => {
                     Prescribed Medications
                   </h2>
                   <ul className="border-t-2 border-blue-500 pt-2">
-                    {report.medicationsMentioned.length > 0 ? (
-                      report.medicationsMentioned.map((medi, index) => (
+                    {report?.medicationsMentioned.length > 0 ? (
+                      report?.medicationsMentioned.map((medi, index) => (
                         <li key={index} className="text-gray-500 flex">
                           <Dot />
                           {medi}
@@ -128,8 +128,8 @@ const ViewReportDialog = ({ record }: Props) => {
                     Recommendations
                   </h2>
                   <ul className="border-t-2 border-blue-500 pt-2">
-                    {report.recommendations.length > 0 ? (
-                      report.recommendations.map((recommendation, index) => (
+                    {report?.recommendations.length > 0 ? (
+                      report?.recommendations.map((recommendation, index) => (
                         <li key={index} className="text-gray-500 flex">
                           <Dot />
                           {recommendation}

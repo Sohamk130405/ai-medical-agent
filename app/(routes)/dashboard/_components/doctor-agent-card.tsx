@@ -3,8 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { IconArrowRight } from "@tabler/icons-react";
+import axios from "axios";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export type DoctorAgent = {
   id: number;
@@ -19,6 +22,25 @@ export type DoctorAgent = {
 const DoctorAgentCard = ({ doctorAgent }: { doctorAgent: DoctorAgent }) => {
   const router = useRouter();
   const { has } = useAuth();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const onStartConsultation = async () => {
+    setLoading(true);
+    try {
+      const result = await axios.post("/api/session-chat", {
+        notes: "New query",
+        selectedDoctor: doctorAgent,
+      });
+      console.log("Consultation started:", result.data);
+      if (result.data.sessionId) {
+        router.push(`/dashboard/doctor-agent/${result.data.sessionId}`);
+      }
+    } catch (error) {
+      console.error("Error starting consultation:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const isPaidUser = has && has({ plan: "pro" });
   return (
@@ -40,9 +62,14 @@ const DoctorAgentCard = ({ doctorAgent }: { doctorAgent: DoctorAgent }) => {
       <Button
         className="mt-2 w-full relative"
         disabled={!isPaidUser && doctorAgent.subscriptionRequired}
+        onClick={onStartConsultation}
       >
         Start Consultation
-        <IconArrowRight className="absolute right-2 top-3" />
+        {loading ? (
+          <Loader2 className="absolute right-2 top-3 animate-spin" />
+        ) : (
+          <IconArrowRight className="absolute right-2 top-3" />
+        )}
       </Button>
     </div>
   );
