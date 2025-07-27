@@ -1,13 +1,12 @@
 import { UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 const menuItems = [
-  { id: 1, name: "Home", href: "/home" },
-  { id: 2, name: "History", href: "/history" },
-  { id: 3, name: "Pricing", href: "/pricing" },
-  { id: 4, name: "Profile", href: "/profile" },
+  { id: 1, name: "Home", href: "/" },
+  { id: 2, name: "History", href: "/dashboard/history" },
+  { id: 3, name: "Pricing", href: "/dashboard/billing" },
+  { id: 4, name: "Profile", href: "/" },
 ];
 
 const AppHeader = () => {

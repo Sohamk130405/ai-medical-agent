@@ -13,14 +13,19 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { IconArrowRight, IconX } from "@tabler/icons-react";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DoctorAgent } from "./doctor-agent-card";
 import { Loader2 } from "lucide-react";
 import SuggestedDoctorCard from "./suggested-doctor-card";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
+import { SessionDetails } from "../doctor-agent/[sessionId]/page";
 
 const AddNewSessionDialog = () => {
   const router = useRouter();
+
+  const { has } = useAuth();
+  const isPaidUser = has && has({ plan: "pro" });
 
   const [note, setNote] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,6 +34,20 @@ const AddNewSessionDialog = () => {
   const [selectedDoctor, setSelectedDoctor] = useState<DoctorAgent | null>(
     null
   );
+
+  const [historyList, setHistoryList] = useState<SessionDetails[]>([]);
+
+  const getHistoryList = async () => {
+    setLoading(true);
+    const result = await axios.get("/api/session-chat?sessionId=all");
+    console.log(result.data);
+    setHistoryList(result.data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getHistoryList();
+  }, []);
 
   const handleNextClick = async () => {
     setLoading(true);
@@ -63,7 +82,9 @@ const AddNewSessionDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>+ Start a Consultation</Button>
+        <Button disabled={!isPaidUser && historyList.length >= 1}>
+          + Start a Consultation
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

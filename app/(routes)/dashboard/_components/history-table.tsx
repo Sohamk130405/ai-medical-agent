@@ -8,9 +8,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SessionDetails } from "../doctor-agent/[sessionId]/page";
-import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
 import moment from "moment";
+import ViewReportDialog from "./view-report-dialog";
 interface Props {
   historyList: SessionDetails[];
 }
@@ -39,10 +38,7 @@ const HistoryTable = ({ historyList }: Props) => {
                 {moment(new Date(record.createdOn)).fromNow()}
               </TableCell>
               <TableCell className="text-right">
-                <Button variant={"link"} size={"sm"}>
-                  <Eye />
-                  View Report
-                </Button>
+                <ViewReportDialog record={record}/>
               </TableCell>
             </TableRow>
           ))}

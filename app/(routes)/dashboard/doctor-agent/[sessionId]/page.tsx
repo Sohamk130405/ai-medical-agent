@@ -10,11 +10,25 @@ import Vapi from "@vapi-ai/web";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
+export type MedicalReport = {
+  sessionld: string;
+  agent: string;
+  user: string;
+  timestamp: string;
+  chiefComplaint: string;
+  summary: string;
+  symptoms: string[];
+  duration: string;
+  severity: string;
+  medicationsMentioned: string[];
+  recommendations: string[];
+};
+
 export type SessionDetails = {
   id: number;
   notes: string;
   sessionId: string;
-  report: JSON;
+  report: MedicalReport;
   selectedDoctor: DoctorAgent;
   createdOn: string;
 };

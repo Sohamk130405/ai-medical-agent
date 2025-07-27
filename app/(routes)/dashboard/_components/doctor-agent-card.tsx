@@ -1,6 +1,10 @@
+"use client";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@clerk/nextjs";
 import { IconArrowRight } from "@tabler/icons-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export type DoctorAgent = {
   id: number;
@@ -13,8 +17,15 @@ export type DoctorAgent = {
 };
 
 const DoctorAgentCard = ({ doctorAgent }: { doctorAgent: DoctorAgent }) => {
+  const router = useRouter();
+  const { has } = useAuth();
+
+  const isPaidUser = has && has({ plan: "pro" });
   return (
-    <div>
+    <div className="relative">
+      {doctorAgent.subscriptionRequired && (
+        <Badge className="absolute m-2 right-0">Premium</Badge>
+      )}
       <Image
         src={doctorAgent.image}
         alt={doctorAgent.specialist}
@@ -26,7 +37,10 @@ const DoctorAgentCard = ({ doctorAgent }: { doctorAgent: DoctorAgent }) => {
       <p className="line-clamp-2 text-sm text-gray-600">
         {doctorAgent.description}
       </p>
-      <Button className="mt-2 w-full relative">
+      <Button
+        className="mt-2 w-full relative"
+        disabled={!isPaidUser && doctorAgent.subscriptionRequired}
+      >
         Start Consultation
         <IconArrowRight className="absolute right-2 top-3" />
       </Button>
